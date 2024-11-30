@@ -16,7 +16,7 @@ export function Header({ totalItems }: HeaderProps) {
 
   // const updateCartCount = async () => {
   //   try {
-  //     const response = await fetch("http://localhost:4000/cart/1");
+  //     const response = await fetch("http://3.0.50.174:4000/cart/1");
   //     if (!response.ok) throw new Error(`Failed to fetch cart data: ${response.statusText}`);
   //     const data = await response.json();
 
