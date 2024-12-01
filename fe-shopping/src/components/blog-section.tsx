@@ -33,7 +33,7 @@ export function BlogSection({ updateCartCount ,searchQuery  }: BlogSectionProps)
       const queryParam = searchQuery ? `?product=${searchQuery}` : "?product=GetAllData";
 
       try {
-        const response = await fetch(`http://localhost:4000/products/search${queryParam}`);
+        const response = await fetch(`http://3.0.50.174:4000/products/search${queryParam}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
@@ -57,7 +57,7 @@ export function BlogSection({ updateCartCount ,searchQuery  }: BlogSectionProps)
 
   const handleAddToCart = async (productId: number) => {
     try {
-      const response = await fetch("http://localhost:4000/cart", {
+      const response = await fetch("http://3.0.50.174:4000/cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

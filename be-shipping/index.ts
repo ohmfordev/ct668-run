@@ -366,5 +366,5 @@ app.post('/fetch-and-store-products', async (req, res) => {
 
 // Start the server
 app.listen(4000, () => {
-    console.log('Server is running on http://localhost:4000');
+    console.log('Server is running on http://3.0.50.174:4000');
 });
