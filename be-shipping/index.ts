@@ -272,7 +272,6 @@ app.get('/cart/:userId', async ({ params }) => {
              WHERE c.user_id = $1`,
             [userId]
         );
-
         // Calculate the overall total price for all products in the cart
         const items = result.rows;
         const overallTotalPrice = items.reduce((sum, item) => sum + parseFloat(item.total_price_per_product), 0);
@@ -284,74 +283,6 @@ app.get('/cart/:userId', async ({ params }) => {
     }
 });
 
-
-
-// async function fetchAndStoreProducts() {
-//     try {
-//         const response = await axios.get('https://dummyjson.com/products');
-//         const products = response.data.products;
-
-//         for (const product of products) {
-//             const result = await client.query(
-//                 `INSERT INTO se_66130_products 
-//                 (title, description, category, price, discount_percentage, rating, stock, brand, sku, weight, width, height, depth, warranty_information, shipping_information, availability_status, return_policy, minimum_order_quantity, created_at, updated_at, barcode, qr_code, thumbnail) 
-//                 VALUES 
-//                 ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23) RETURNING id`,
-//                 [
-//                     product.title,
-//                     product.description,
-//                     product.category,
-//                     product.price,
-//                     product.discountPercentage,
-//                     product.rating,
-//                     product.stock,
-//                     product.brand,
-//                     product.sku,
-//                     product.weight,
-//                     product.dimensions.width,
-//                     product.dimensions.height,
-//                     product.dimensions.depth,
-//                     product.warrantyInformation,
-//                     product.shippingInformation,
-//                     product.availabilityStatus,
-//                     product.returnPolicy,
-//                     product.minimumOrderQuantity,
-//                     product.meta.createdAt,
-//                     product.meta.updatedAt,
-//                     product.meta.barcode,
-//                     product.meta.qrCode,
-//                     product.thumbnail
-//                 ]
-//             );
-
-//             const productId = result.rows[0].id;
-
-//             for (const tag of product.tags) {
-//                 await client.query('INSERT INTO product_tags (product_id, tag) VALUES ($1, $2)', [productId, tag]);
-//             }
-
-//             for (const imageUrl of product.images) {
-//                 await client.query('INSERT INTO product_images (product_id, image_url) VALUES ($1, $2)', [productId, imageUrl]);
-//             }
-
-//             for (const review of product.reviews) {
-//                 await client.query(
-//                     `INSERT INTO reviews 
-//                     (product_id, rating, comment, review_date, reviewer_name, reviewer_email) 
-//                     VALUES ($1, $2, $3, $4, $5, $6)`,
-//                     [productId, review.rating, review.comment, review.date, review.reviewerName, review.reviewerEmail]
-//                 );
-//             }
-
-//             console.log(`Product ${product.title} inserted successfully.`);
-//         }
-
-//         return { message: 'Products inserted successfully' };
-//     } catch (error) {
-//         console.error('Error fetching or inserting data:', error);
-//         throw error;
-//     }
-// }
 async function fetchAndStoreProducts() {
     try {
         // Fetch data from the API
@@ -430,9 +361,6 @@ async function fetchAndStoreProducts() {
 }
 
 
-// app.post('/login', async ({ body }) => {
-
-
     app.post('/fetch-and-store-products', async ({ set }) => {
         try {
             const result = await fetchAndStoreProducts(); // เรียกใช้ฟังก์ชัน fetchAndStoreProducts
@@ -449,7 +377,6 @@ async function fetchAndStoreProducts() {
         }
     })
 
-// fetchAndStoreProducts();
 
 // Start the server
 app.listen(4000, () => {
