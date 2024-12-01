@@ -99,7 +99,7 @@ export function BlogSection({ updateCartCount ,searchQuery  }: BlogSectionProps)
     <section className="container flex flex-col items-center gap-6 py-24 sm:gap-7">
       <div className="flex flex-col gap-3">
         <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl text-center">
-          Shopping Cart
+          Shopping Lists
         </h2>
       </div>
       <div className="mt-6 grid auto-rows-fr grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
