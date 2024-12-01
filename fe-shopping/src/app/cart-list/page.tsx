@@ -26,6 +26,8 @@ export default function ChartListPage() {
     }
   };
 
+  
+
   // ตรวจสอบ userId และ Redirect ไป Login ถ้าไม่มี
   useEffect(() => {
     if (typeof window !== "undefined") {
