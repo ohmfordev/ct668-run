@@ -1,5 +1,5 @@
 -- Table for Products
-CREATE TABLE products (
+CREATE TABLE se_66130_products (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -29,14 +29,14 @@ CREATE TABLE products (
 -- Table for Tags associated with Products (many-to-many relationship)
 CREATE TABLE product_tags (
     id SERIAL PRIMARY KEY,
-    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+    product_id INT REFERENCES se_66130_products(id) ON DELETE CASCADE,
     tag VARCHAR(100)
 );
 
 -- Table for Reviews (one-to-many relationship with Products)
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
-    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+    product_id INT REFERENCES se_66130_products(id) ON DELETE CASCADE,
     rating INT,
     comment TEXT,
     review_date TIMESTAMP,
@@ -47,14 +47,14 @@ CREATE TABLE reviews (
 -- Table for Product Images (one-to-many relationship with Products)
 CREATE TABLE product_images (
     id SERIAL PRIMARY KEY,
-    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+    product_id INT REFERENCES se_66130_products(id) ON DELETE CASCADE,
     image_url VARCHAR(255)
 );
 
 -- Table for Meta information (one-to-one relationship with Products)
 CREATE TABLE product_meta (
     id SERIAL PRIMARY KEY,
-    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+    product_id INT REFERENCES se_66130_products(id) ON DELETE CASCADE,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     barcode VARCHAR(50),
@@ -71,7 +71,7 @@ CREATE TABLE se_66130_customers (
 CREATE TABLE cart (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES se_66130_customers(id) ON DELETE CASCADE,
-    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+    product_id INT REFERENCES se_66130_products(id) ON DELETE CASCADE,
     quantity INT NOT NULL CHECK (quantity > 0),
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

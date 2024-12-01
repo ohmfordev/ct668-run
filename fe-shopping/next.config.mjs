@@ -18,7 +18,7 @@ const nextConfig = {
 
   // หากต้องการจัดการ environment variables ใน build time
   // env: {
-  //   API_URL: 'http://3.0.50.174:4000', // กำหนด URL ของ API
+  //   API_URL: 'http://localhost:4000', // กำหนด URL ของ API
   // },
 };
 

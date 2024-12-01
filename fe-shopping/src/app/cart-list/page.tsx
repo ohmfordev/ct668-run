@@ -12,7 +12,7 @@ export default function ChartListPage() {
   const updateCartCount = async () => {
     if (!userId) return; // หยุดทำงานถ้า userId ไม่มี
     try {
-      const response = await fetch("http://3.0.50.174:4000/cart/" + userId);
+      const response = await fetch("http://localhost:4000/cart/" + userId);
       if (!response.ok)
         throw new Error(`Failed to fetch cart data: ${response.statusText}`);
       const data = await response.json();

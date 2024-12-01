@@ -23,7 +23,7 @@ export function Component({ updateCartCount }: CartSectionProps) {
 
   const fetchCartData = () => {
     axios
-      .get(`http://3.0.50.174:4000/cart/${userIdLocal}`)
+      .get(`http://localhost:4000/cart/${userIdLocal}`)
       .then((response) => {
 
 
@@ -51,7 +51,7 @@ export function Component({ updateCartCount }: CartSectionProps) {
 
   const updateQuantity = (productId: number, quantityChange: number) => {
     axios
-      .post("http://3.0.50.174:4000/cart", {
+      .post("http://localhost:4000/cart", {
         userId: userIdLocal,
         productId,
         quantity: quantityChange,
@@ -65,7 +65,7 @@ export function Component({ updateCartCount }: CartSectionProps) {
 
   const deleteItem = (productId: number) => {
     axios
-      .delete("http://3.0.50.174:4000/cart", {
+      .delete("http://localhost:4000/cart", {
         data: {
           userId: userIdLocal,
           productId,

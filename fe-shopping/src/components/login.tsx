@@ -19,7 +19,7 @@ export function Login() {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://3.0.50.174:4000/login", {
+      const response = await fetch("http://localhost:4000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

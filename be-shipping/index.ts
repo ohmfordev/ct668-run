@@ -124,7 +124,7 @@ app.get('/products/:id', async ({ params, req }) => {
     // if (req.error) return req.error; // Return error if token verification failed
 
     try {
-        const result = await client.query('SELECT * FROM products WHERE id = $1', [params.id]);
+        const result = await client.query('SELECT * FROM se_66130_products WHERE id = $1', [params.id]);
         if (result.rows.length === 0) {
             return { error: 'Product not found' };
         }
@@ -155,7 +155,7 @@ app.get('/products/search', async ({ query }) => {
     } else if (searchTerm === "GetAllData") {
         // Return all data if the search term is "GetAllData"
         try {
-            const result = await client.query('SELECT id, title, description,  price, thumbnail  FROM public.products');
+            const result = await client.query('SELECT id, title, description,  price, thumbnail  FROM public.se_66130_products');
             return result.rows;
         } catch (error) {
             console.error('Error fetching all products:', error);
@@ -166,7 +166,7 @@ app.get('/products/search', async ({ query }) => {
         try {
             const result = await client.query(
                 `SELECT id, title, description,  price, thumbnail 
-                 FROM public.products 
+                 FROM public.se_66130_products 
                  WHERE title ILIKE $1 OR description ILIKE $1 OR category ILIKE $1`,
                 [`%${searchTerm}%`]
             );
@@ -268,7 +268,7 @@ app.get('/cart/:userId', async ({ params }) => {
                 p.thumbnail,
                 (p.price * c.quantity) AS total_price_per_product
              FROM cart c
-             JOIN products p ON c.product_id = p.id
+             JOIN se_66130_products p ON c.product_id = p.id
              WHERE c.user_id = $1`,
             [userId]
         );
@@ -286,15 +286,12 @@ app.get('/cart/:userId', async ({ params }) => {
 
 
 
-
-async function fetchAndStoreProducts() {
+sync function fetchAndStoreProducts() {
     try {
-        // Fetch data from the API
         const response = await axios.get('https://dummyjson.com/products');
         const products = response.data.products;
 
         for (const product of products) {
-            // Insert product data into the products table
             const result = await client.query(
                 `INSERT INTO products 
                 (title, description, category, price, discount_percentage, rating, stock, brand, sku, weight, width, height, depth, warranty_information, shipping_information, availability_status, return_policy, minimum_order_quantity, created_at, updated_at, barcode, qr_code, thumbnail) 
@@ -326,50 +323,47 @@ async function fetchAndStoreProducts() {
                     product.thumbnail
                 ]
             );
-            
+
             const productId = result.rows[0].id;
 
-            // Insert tags
             for (const tag of product.tags) {
-                await client.query(
-                    'INSERT INTO product_tags (product_id, tag) VALUES ($1, $2)',
-                    [productId, tag]
-                );
+                await client.query('INSERT INTO product_tags (product_id, tag) VALUES ($1, $2)', [productId, tag]);
             }
 
-            // Insert images
             for (const imageUrl of product.images) {
-                await client.query(
-                    'INSERT INTO product_images (product_id, image_url) VALUES ($1, $2)',
-                    [productId, imageUrl]
-                );
+                await client.query('INSERT INTO product_images (product_id, image_url) VALUES ($1, $2)', [productId, imageUrl]);
             }
 
-            // Insert reviews
             for (const review of product.reviews) {
                 await client.query(
                     `INSERT INTO reviews 
                     (product_id, rating, comment, review_date, reviewer_name, reviewer_email) 
                     VALUES ($1, $2, $3, $4, $5, $6)`,
-                    [
-                        productId,
-                        review.rating,
-                        review.comment,
-                        review.date,
-                        review.reviewerName,
-                        review.reviewerEmail
-                    ]
+                    [productId, review.rating, review.comment, review.date, review.reviewerName, review.reviewerEmail]
                 );
             }
 
             console.log(`Product ${product.title} inserted successfully.`);
         }
 
+        return { message: 'Products inserted successfully' };
     } catch (error) {
         console.error('Error fetching or inserting data:', error);
+        throw error;
     }
 }
-fetchAndStoreProducts();
+
+// สร้าง API Endpoint สำหรับ POST
+app.post('/fetch-and-store-products', async (req, res) => {
+    try {
+        const result = await fetchAndStoreProducts();
+        res.status(200).json(result);  // ส่ง response กลับในกรณีสำเร็จ
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to fetch and store products' });  // ส่ง error response ถ้ามีข้อผิดพลาด
+    }
+});
+
 // Start the server
 app.listen(4000, () => {
     console.log('Server is running on http://localhost:4000');
