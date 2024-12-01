@@ -111,7 +111,7 @@ app.post('/login', async ({ body }) => {
 
 app.get('/products', async () => {
     try {
-        const result = await client.query('SELECT * FROM public.products');
+        const result = await client.query('SELECT * FROM public.se_66130_products');
         return result.rows;
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -286,14 +286,81 @@ app.get('/cart/:userId', async ({ params }) => {
 
 
 
-sync function fetchAndStoreProducts() {
+// async function fetchAndStoreProducts() {
+//     try {
+//         const response = await axios.get('https://dummyjson.com/products');
+//         const products = response.data.products;
+
+//         for (const product of products) {
+//             const result = await client.query(
+//                 `INSERT INTO se_66130_products 
+//                 (title, description, category, price, discount_percentage, rating, stock, brand, sku, weight, width, height, depth, warranty_information, shipping_information, availability_status, return_policy, minimum_order_quantity, created_at, updated_at, barcode, qr_code, thumbnail) 
+//                 VALUES 
+//                 ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23) RETURNING id`,
+//                 [
+//                     product.title,
+//                     product.description,
+//                     product.category,
+//                     product.price,
+//                     product.discountPercentage,
+//                     product.rating,
+//                     product.stock,
+//                     product.brand,
+//                     product.sku,
+//                     product.weight,
+//                     product.dimensions.width,
+//                     product.dimensions.height,
+//                     product.dimensions.depth,
+//                     product.warrantyInformation,
+//                     product.shippingInformation,
+//                     product.availabilityStatus,
+//                     product.returnPolicy,
+//                     product.minimumOrderQuantity,
+//                     product.meta.createdAt,
+//                     product.meta.updatedAt,
+//                     product.meta.barcode,
+//                     product.meta.qrCode,
+//                     product.thumbnail
+//                 ]
+//             );
+
+//             const productId = result.rows[0].id;
+
+//             for (const tag of product.tags) {
+//                 await client.query('INSERT INTO product_tags (product_id, tag) VALUES ($1, $2)', [productId, tag]);
+//             }
+
+//             for (const imageUrl of product.images) {
+//                 await client.query('INSERT INTO product_images (product_id, image_url) VALUES ($1, $2)', [productId, imageUrl]);
+//             }
+
+//             for (const review of product.reviews) {
+//                 await client.query(
+//                     `INSERT INTO reviews 
+//                     (product_id, rating, comment, review_date, reviewer_name, reviewer_email) 
+//                     VALUES ($1, $2, $3, $4, $5, $6)`,
+//                     [productId, review.rating, review.comment, review.date, review.reviewerName, review.reviewerEmail]
+//                 );
+//             }
+
+//             console.log(`Product ${product.title} inserted successfully.`);
+//         }
+
+//         return { message: 'Products inserted successfully' };
+//     } catch (error) {
+//         console.error('Error fetching or inserting data:', error);
+//         throw error;
+//     }
+// }
+async function fetchAndStoreProducts() {
     try {
+        // Fetch data from the API
         const response = await axios.get('https://dummyjson.com/products');
         const products = response.data.products;
-
         for (const product of products) {
+            // Insert product data into the products table
             const result = await client.query(
-                `INSERT INTO products 
+                `INSERT INTO se_66130_products 
                 (title, description, category, price, discount_percentage, rating, stock, brand, sku, weight, width, height, depth, warranty_information, shipping_information, availability_status, return_policy, minimum_order_quantity, created_at, updated_at, barcode, qr_code, thumbnail) 
                 VALUES 
                 ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23) RETURNING id`,
@@ -323,46 +390,66 @@ sync function fetchAndStoreProducts() {
                     product.thumbnail
                 ]
             );
-
+            
             const productId = result.rows[0].id;
-
+            // Insert tags
             for (const tag of product.tags) {
-                await client.query('INSERT INTO product_tags (product_id, tag) VALUES ($1, $2)', [productId, tag]);
+                await client.query(
+                    'INSERT INTO product_tags (product_id, tag) VALUES ($1, $2)',
+                    [productId, tag]
+                );
             }
-
+            // Insert images
             for (const imageUrl of product.images) {
-                await client.query('INSERT INTO product_images (product_id, image_url) VALUES ($1, $2)', [productId, imageUrl]);
+                await client.query(
+                    'INSERT INTO product_images (product_id, image_url) VALUES ($1, $2)',
+                    [productId, imageUrl]
+                );
             }
-
+            // Insert reviews
             for (const review of product.reviews) {
                 await client.query(
                     `INSERT INTO reviews 
                     (product_id, rating, comment, review_date, reviewer_name, reviewer_email) 
                     VALUES ($1, $2, $3, $4, $5, $6)`,
-                    [productId, review.rating, review.comment, review.date, review.reviewerName, review.reviewerEmail]
+                    [
+                        productId,
+                        review.rating,
+                        review.comment,
+                        review.date,
+                        review.reviewerName,
+                        review.reviewerEmail
+                    ]
                 );
             }
-
             console.log(`Product ${product.title} inserted successfully.`);
         }
-
-        return { message: 'Products inserted successfully' };
     } catch (error) {
         console.error('Error fetching or inserting data:', error);
-        throw error;
     }
 }
 
-// สร้าง API Endpoint สำหรับ POST
-app.post('/fetch-and-store-products', async (req, res) => {
-    try {
-        const result = await fetchAndStoreProducts();
-        res.status(200).json(result);  // ส่ง response กลับในกรณีสำเร็จ
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to fetch and store products' });  // ส่ง error response ถ้ามีข้อผิดพลาด
-    }
-});
+
+// app.post('/login', async ({ body }) => {
+
+
+    app.post('/fetch-and-store-products', async ({ set }) => {
+        try {
+            const result = await fetchAndStoreProducts(); // เรียกใช้ฟังก์ชัน fetchAndStoreProducts
+            set.status = 200; // กำหนด HTTP Status Code
+            // return result;
+            return {
+                status: result,
+                body: { message: 'Create Product in successfully'},
+            };
+        } catch (error) {
+            console.error('Error:', error);
+            set.status = 500; // ส่งสถานะข้อผิดพลาด
+            return { error: 'Failed to fetch and store products' };
+        }
+    })
+
+// fetchAndStoreProducts();
 
 // Start the server
 app.listen(4000, () => {
